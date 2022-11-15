@@ -43,6 +43,15 @@ class Utils(commands.Cog):
             ctx.command_failed = False
             return await ctx.message.reply("the calculation is a required argument.",)
 
+    @commands.command()
+    async def invite(self, ctx: commands.Context):
+        """Create instant invite"""
+        if not isinstance(ctx.channel, discord.abc.GuildChannel):
+            raise IntentionalError(
+                "Command is only supported on guild server.")
+        link = await ctx.channel.create_invite(max_uses=0, max_age=60 * 60)
+
+        await ctx.send(f"{link}", embed=Embed(title="obs.:", description="this invitation is only valid for 1 hour", color=discord.Color.yellow()))
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(Utils(bot))
