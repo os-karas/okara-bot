@@ -1,8 +1,8 @@
 import discord
+import typing
 
 from discord.ext import commands
 from discord.embeds import Embed
-from typing import Optional, Union
 
 from contexts.all import GuildContext
 
@@ -53,7 +53,7 @@ class Utils(commands.Cog):
                                    color=discord.Color.yellow()))
 
     @commands.command(name="whoami", aliases=["who"])
-    async def who_am_i(self, ctx: commands.Context, author: Optional[Union[discord.User, discord.Member]] = None):
+    async def who_am_i(self, ctx: commands.Context, author: typing.Optional[typing.Union[discord.User, discord.Member]] = None):
         """Describes user"""
         author = author or ctx.author
 
