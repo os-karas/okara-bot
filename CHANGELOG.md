@@ -13,3 +13,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Events by Cog Extensions
 - Tasks by Cog Extensions
 - Event with basic error handling
+- Resolved commands are ignored
