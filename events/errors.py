@@ -10,7 +10,9 @@ class Errors(commands.Cog):
 
     @commands.Cog.listener()
     async def on_command_error(self, ctx: commands.Context, error: Exception):
-        return await ctx.message.reply(str(error))
+        if isinstance(error, errors.CommandError):
+            return await ctx.message.reply(str(error))
+        raise error
 
 
 async def setup(bot: commands.Bot):
