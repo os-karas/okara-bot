@@ -2,6 +2,14 @@ from discord.ext.commands import errors
 from discord.ext import commands
 
 
+class IntentionalError(errors.CommandError):
+    """Exception when there is a conflict caused by the bot, which did not consider a user error.
+
+    This inherited from :exc:`CommandError`.
+    """
+    pass
+
+
 class Errors(commands.Cog):
     """toogle status"""
 
