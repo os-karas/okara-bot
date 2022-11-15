@@ -10,6 +10,9 @@ class Errors(commands.Cog):
 
     @commands.Cog.listener()
     async def on_command_error(self, ctx: commands.Context, error: Exception):
+        if not ctx.command_failed:
+            return
+
         if isinstance(error, IntentionalError):
             return await ctx.message.reply(str(error))
         raise error
