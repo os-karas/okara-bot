@@ -11,11 +11,19 @@ __maintainer__ = "Rob Knight"
 __email__ = "kauaug.mo@gmail.com"
 __status__ = "Development"
 
+import asyncio
 import os
 import discord
 
 from discord.ext import commands
 from dotenv import load_dotenv
+from utils.bot import load_module_extensions
+
+
+async def load_extensions(bot: commands.Bot):
+    await load_module_extensions(bot, "commands")
+    await load_module_extensions(bot, "tasks")
+    await load_module_extensions(bot, "events")
 
 
 load_dotenv()
@@ -29,4 +37,5 @@ async def hello(ctx):
     await ctx.send("world")
 
 
+asyncio.run(load_extensions(bot))
 bot.run(os.getenv("BOT_TOKEN") or "")
