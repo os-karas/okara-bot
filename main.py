@@ -28,7 +28,9 @@ async def load_extensions(bot: commands.Bot):
 
 load_dotenv()
 
-bot = commands.Bot(command_prefix="_", intents=discord.Intents.all())
+bot = commands.Bot(
+    command_prefix=commands.when_mentioned_or("_"),
+    intents=discord.Intents.all())
 
 
 @bot.command()
