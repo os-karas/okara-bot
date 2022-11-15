@@ -11,7 +11,6 @@ class IntentionalError(errors.CommandError):
 
 
 class Errors(commands.Cog):
-    """toogle status"""
 
     def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
