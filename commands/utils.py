@@ -14,7 +14,7 @@ class Utils(commands.Cog):
 
     @commands.command()
     async def ping(self, ctx: commands.Context):
-        """test bot latency"""
+        """Test bot latency"""
         await ctx.send(embed=Embed(
             title="pong",
             description=f"{self.bot.latency*1000:.0f}ms",
