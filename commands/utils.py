@@ -55,7 +55,7 @@ class Utils(commands.Cog):
         await ctx.send(f"{link}", embed=Embed(title="obs.:", description="this invitation is only valid for 1 hour", color=discord.Color.yellow()))
 
     @commands.command(name="whoami", aliases=["who"])
-    async def who_am_i(self, ctx: commands.Context, author: Optional[Union[discord.User, discord.Member]]):
+    async def who_am_i(self, ctx: commands.Context, author: Optional[Union[discord.User, discord.Member]] = None):
         """Describes user"""
         author = author or ctx.author
 
