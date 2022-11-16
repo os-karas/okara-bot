@@ -14,3 +14,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Tasks by Cog Extensions
 - Event with basic error handling
 - Resolved commands are ignored
+- Command Utils
+- (Utils) Command ping
+- (Utils) Command calculate
+- (Utils) Command invite
+- (Utils) Command whoami
