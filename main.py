@@ -17,6 +17,7 @@ import discord
 
 from discord.ext import commands
 from dotenv import load_dotenv
+from commands.others.help import HelpCommand
 from utils.bot import load_module_extensions
 
 
@@ -30,7 +31,8 @@ load_dotenv()
 
 bot = commands.Bot(
     command_prefix=commands.when_mentioned_or("_"),
-    intents=discord.Intents.all())
+    intents=discord.Intents.all(),
+    help_command=HelpCommand())
 
 
 @bot.command()
