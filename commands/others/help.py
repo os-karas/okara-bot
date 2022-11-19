@@ -11,7 +11,7 @@ if typing.TYPE_CHECKING:
 
 class HelpView(discord.ui.View):
 
-    def __init__(self, *, mapping: 'CogMapping', msg: discord.Message, timeout: typing.Optional[float] = 10):
+    def __init__(self, *, mapping: 'CogMapping', msg: discord.Message, timeout: typing.Optional[float] = 180):
         local_mapping: typing.Dict[str, CommandList] = {}
         for cog, commands in mapping.items():  # get the cog and its commands separately
             if len(commands) < 1:
