@@ -1,6 +1,5 @@
 from discord.ext.commands import errors
 from discord.ext import commands
-from errors.events import IntentionalError
 
 
 class Errors(commands.Cog):
@@ -13,7 +12,7 @@ class Errors(commands.Cog):
         if not ctx.command_failed:
             return
 
-        if isinstance(error, IntentionalError):
+        if isinstance(error, commands.CommandError):
             return await ctx.message.reply(str(error))
         raise error
 

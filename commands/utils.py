@@ -4,8 +4,6 @@ from discord.ext import commands
 from discord.embeds import Embed
 from typing import Optional, Union
 
-from errors.events import IntentionalError
-
 
 class Utils(commands.Cog):
     """utilities Commands"""
@@ -27,7 +25,7 @@ class Utils(commands.Cog):
         """calculate math expressions"""
 
         if calc.__len__() > 50:
-            raise IntentionalError("The accepted character limit is 50.")
+            raise commands.RangeError(calc, 1, 50)
 
         await ctx.send(embed=Embed(
             title=calc,
@@ -48,8 +46,7 @@ class Utils(commands.Cog):
     async def invite(self, ctx: commands.Context):
         """Create instant invite"""
         if not isinstance(ctx.channel, discord.abc.GuildChannel):
-            raise IntentionalError(
-                "Command is only supported on guild server.")
+            raise commands.NoPrivateMessage()
         link = await ctx.channel.create_invite(max_uses=0, max_age=60 * 60)
 
         await ctx.send(f"{link}", embed=Embed(title="obs.:", description="this invitation is only valid for 1 hour", color=discord.Color.yellow()))
