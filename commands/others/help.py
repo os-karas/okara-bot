@@ -28,7 +28,8 @@ class HelpView(discord.ui.View):
                            label=group[0],
                            value=group[1]
                        ) for group in [("🛠️ Utils", "Utils"),
-                                       ("❓ No Category", "No Category")
+                                       ("❓ No Category", "No Category"),
+                                       ("🎵 Music", "Music"),
                                        ]])
     async def select_channels(self, interaction: discord.Interaction, select: discord.ui.Select):
         selected = select.values[0]
