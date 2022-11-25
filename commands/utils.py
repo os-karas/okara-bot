@@ -1,8 +1,13 @@
+from errors.events import IntentionalError
+from contexts.all import GuildContext
 import discord
+import typing
 
 from discord.ext import commands
 from discord.embeds import Embed
 from typing import Optional, Union
+
+from contexts.all import GuildContext
 
 
 class Utils(commands.Cog):
@@ -38,21 +43,74 @@ class Utils(commands.Cog):
         if isinstance(err, commands.CommandInvokeError):
             ctx.command_failed = False
             return await ctx.message.reply("Invalid calculation, enter a valid calculation.")
-        if isinstance(err, commands.MissingRequiredArgument):
-            ctx.command_failed = False
-            return await ctx.message.reply("the calculation is a required argument.",)
 
     @commands.command()
-    async def invite(self, ctx: commands.Context):
+    @commands.guild_only()
+    async def invite(self, ctx: GuildContext):
         """Create instant invite"""
-        if not isinstance(ctx.channel, discord.abc.GuildChannel):
-            raise commands.NoPrivateMessage()
         link = await ctx.channel.create_invite(max_uses=0, max_age=60 * 60)
 
-        await ctx.send(f"{link}", embed=Embed(title="obs.:", description="this invitation is only valid for 1 hour", color=discord.Color.yellow()))
+        await ctx.send(f"{link}",
+                       embed=Embed(title="obs.:",
+                                   description="this invitation is only valid for 1 hour",
+                                   color=discord.Color.yellow()))
 
     @commands.command(name="whoami", aliases=["who"])
-    async def who_am_i(self, ctx: commands.Context, author: Optional[Union[discord.User, discord.Member]] = None):
+    async def who_am_i(self, ctx: commands.Context, author: typing.Optional[typing.Union[discord.User, discord.Member]] = None):
+        """Describes user"""
+        author = author or ctx.author
+
+        embed = Embed(color=author.color,
+                      title=author)
+        embed.set_image(url=author.banner)
+        embed.set_thumbnail(
+            url=author.display_avatar.url)
+
+        embed.add_field(
+            name="\U00002139 User Info",
+            value=f"""
+                **User Id:** {author.id}
+                **Name:** {author.name}
+                **Created:** {author.created_at.strftime('%d/%m/%Y %H:%M')}
+
+            """,
+            inline=False
+        )
+
+        if isinstance(author, discord.member.Member):
+            embed.add_field(
+                name="\U0001F464 Member Info",
+                value=f"""
+                    {f"**Joined:** {author.joined_at.strftime('%d/%m/%Y %H:%M')}" if author.joined_at else ""}
+                    {f"**Nick:** {author.nick}" if author.nick else ""}
+                    **Top Role:** {author.top_role.name if author.top_role.name.startswith("@") else author.top_role.mention}
+                    **Roles:**
+                    {", ".join(
+                        map(
+                            lambda role: role.name if role.name.startswith("@") else role.mention,
+                            author.roles
+                            ))}
+
+                """,
+                inline=False
+            )
+
+        await ctx.send(embed=embed)
+
+    @commands.command()
+    @commands.guild_only()
+    async def invite(self, ctx: GuildContext):
+        """Create instant invite"""
+
+        link = await ctx.channel.create_invite(max_uses=0, max_age=60 * 60)
+
+        await ctx.send(f"{link}",
+                       embed=Embed(title="obs.:",
+                                   description="this invitation is only valid for 1 hour",
+                                   color=discord.Color.yellow()))
+
+    @commands.command(name="whoami", aliases=["who"])
+    async def who_am_i(self, ctx: commands.Context, author: Optional[Union[discord.User, discord.Member]]):
         """Describes user"""
         author = author or ctx.author
 
