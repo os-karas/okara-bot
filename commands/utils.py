@@ -1,14 +1,14 @@
+from errors.events import IntentionalError
+from contexts.all import GuildContext
 import discord
 
 from discord.ext import commands
 from discord.embeds import Embed
 from typing import Optional, Union
 
-<<<<<<< HEAD
-from contexts.all import GuildContext
-=======
-from errors.events import IntentionalError
->>>>>>> ac0e98e6a9e38e5e72c373ce1456954246932e76
+<< << << < HEAD
+== == == =
+>>>>>> > ac0e98e6a9e38e5e72c373ce1456954246932e76
 
 
 class Utils(commands.Cog):
@@ -44,7 +44,6 @@ class Utils(commands.Cog):
         if isinstance(err, commands.CommandInvokeError):
             ctx.command_failed = False
             return await ctx.message.reply("Invalid calculation, enter a valid calculation.")
-<<<<<<< HEAD
 
     @commands.command()
     @commands.guild_only()
@@ -57,21 +56,6 @@ class Utils(commands.Cog):
                        embed=Embed(title="obs.:",
                                    description="this invitation is only valid for 1 hour",
                                    color=discord.Color.yellow()))
-=======
-        if isinstance(err, commands.MissingRequiredArgument):
-            ctx.command_failed = False
-            return await ctx.message.reply("the calculation is a required argument.",)
-
-    @commands.command()
-    async def invite(self, ctx: commands.Context):
-        """Create instant invite"""
-        if not isinstance(ctx.channel, discord.abc.GuildChannel):
-            raise IntentionalError(
-                "Command is only supported on guild server.")
-        link = await ctx.channel.create_invite(max_uses=0, max_age=60 * 60)
-
-        await ctx.send(f"{link}", embed=Embed(title="obs.:", description="this invitation is only valid for 1 hour", color=discord.Color.yellow()))
->>>>>>> ac0e98e6a9e38e5e72c373ce1456954246932e76
 
     @commands.command(name="whoami", aliases=["who"])
     async def who_am_i(self, ctx: commands.Context, author: Optional[Union[discord.User, discord.Member]]):
