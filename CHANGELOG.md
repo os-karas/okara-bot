@@ -19,3 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - (Utils) Command calculate
 - (Utils) Command invite
 - (Utils) Command whoami
+- Command Music
+- (Music) Command join
+- (Music) Command leave
+- (Music) Command play
