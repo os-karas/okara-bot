@@ -2,9 +2,9 @@ import discord
 import asyncio
 import typing
 
-from pytube import exceptions as pytube_erros
 
 from discord.ext import commands
+from pytube import exceptions as pytube_erros
 from pytube import YouTube
 
 

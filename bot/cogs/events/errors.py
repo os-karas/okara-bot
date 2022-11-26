@@ -1,7 +1,6 @@
 import discord
 import re
 
-from discord.ext.commands import errors
 from discord.ext import commands
 
 

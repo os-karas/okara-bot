@@ -3,9 +3,9 @@ import typing
 
 from discord.ext import commands
 
-from commands.musics import checks
-from commands.musics.source import YouTubeSource
-from contexts.musics import GuildBotVoicedContext, GuildVoicedAllowedContext
+from bot.commands.musics import checks
+from bot.commands.musics.source import YouTubeSource
+from bot.contexts.musics import GuildBotVoicedContext, GuildVoicedAllowedContext
 
 
 class Music(commands.Cog):

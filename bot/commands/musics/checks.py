@@ -1,9 +1,9 @@
 import typing
 
 from discord.ext import commands
-from contexts.all import GuildContext
+from bot.contexts.all import GuildContext
 
-from contexts.musics import GuildVoicedAllowedContext, GuildVoicedContext
+from bot.contexts.musics import GuildVoicedAllowedContext, GuildVoicedContext
 
 
 class VoiceError(commands.CheckFailure):

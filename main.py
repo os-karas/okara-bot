@@ -17,14 +17,15 @@ import discord
 
 from discord.ext import commands
 from dotenv import load_dotenv
-from commands.others.help import HelpCommand
-from utils.bot import load_module_extensions
+
+from bot.commands.help import HelpCommand
+from bot.utils.bot import load_module_extensions
 
 
 async def load_extensions(bot: commands.Bot):
-    await load_module_extensions(bot, "commands")
-    await load_module_extensions(bot, "tasks")
-    await load_module_extensions(bot, "events")
+    await load_module_extensions(bot, "bot/cogs/commands")
+    await load_module_extensions(bot, "bot/cogs/tasks")
+    await load_module_extensions(bot, "bot/cogs/events")
 
 
 load_dotenv()
