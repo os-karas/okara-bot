@@ -62,9 +62,12 @@ class YouTubeSource(discord.PCMVolumeTransformer):
         except:
             raise SourceError(f"Could not get the music `{search}`")
 
+        formats_quantity = len(streaming_data["formats"])
         return cls(ctx,
                    discord.FFmpegPCMAudio(
-                       streaming_data["formats"][0]["url"],
+                       streaming_data["formats"]
+                       [formats_quantity / 2]
+                       ["url"],
                        **cls.FFMPEG_OPTIONS),
                    data=data, volume=volume)
 
