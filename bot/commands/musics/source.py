@@ -66,7 +66,7 @@ class YouTubeSource(discord.PCMVolumeTransformer):
         return cls(ctx,
                    discord.FFmpegPCMAudio(
                        streaming_data["formats"]
-                       [formats_quantity / 2]
+                       [int(formats_quantity / 2)]
                        ["url"],
                        **cls.FFMPEG_OPTIONS),
                    data=data, volume=volume)
