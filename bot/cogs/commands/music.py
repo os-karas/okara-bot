@@ -71,7 +71,7 @@ class Music(commands.Cog):
             return await ctx.send(
             embed=discord.Embed(
                 title="volume",
-                description=f'Volume of the player set to {ctx.voice_client.source.volume * 100}%',
+                description=f'Volume of the player set to {int(ctx.voice_client.source.volume * 100)}%',
                 color=discord.Color.dark_teal()))
         
         if 0 > volume or volume > 100:
