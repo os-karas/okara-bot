@@ -62,10 +62,18 @@ class Music(commands.Cog):
     @checks.has_voice_channel_author()
     @checks.has_voice_author()
     @checks.has_voice_client()
-    async def volume(self, ctx: GuildVoicedAllowedContext, *, volume: int):
+    async def volume(self, ctx: GuildVoicedAllowedContext, *, volume: typing.Optional[int]):
         """Sets the volume of the player."""
         if not isinstance(ctx.voice_client.source, discord.PCMVolumeTransformer):
             raise checks.BotNotPlaying()
+        
+        if volume is None:
+            return await ctx.send(
+            embed=discord.Embed(
+                title="volume",
+                description=f'Volume of the player set to {volume}%',
+                color=discord.Color.dark_teal()))
+        
         if 0 > volume or volume > 100:
             raise commands.RangeError(volume, 0, 100)
         ctx.voice_client.source.volume = volume / 100
