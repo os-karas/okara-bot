@@ -199,7 +199,7 @@ class Music(commands.Cog):
         
         embed = discord.Embed(title ="Queue Musics", description=f'**{len(ctx.voice_state.songs)} tracks:**')
 
-        items_per_page = 10
+        items_per_page = 9
         pages = math.ceil(len(ctx.voice_state.songs) / items_per_page)
 
         page = page or 1
@@ -209,7 +209,7 @@ class Music(commands.Cog):
 
         songs = ctx.voice_state.songs[start:end]
 
-        for i, song in enumerate(songs, start=1):
+        for i, song in enumerate(songs, start=start + 1):
             embed.add_field(name=f'**`{i}.`{song.source.data.title}**',value=f'[Link]({song.source.data.watch_url})\n')
 
         await ctx.send(embed=embed)
