@@ -1,0 +1,106 @@
+import asyncio
+import discord
+
+from bot.contexts.all import GuildContext
+from discord.ext import commands
+from .song import Song, SongQueue
+from async_timeout import timeout
+
+
+class VoiceError(Exception):
+    pass
+
+
+class VoiceState:
+    def __init__(self, bot: commands.Bot, ctx: commands.Context):
+        self.bot = bot
+        self._ctx = ctx
+
+        self._next = asyncio.Event()
+        self._voice: discord.VoiceClient | None = ctx.voice_client # type: ignore
+        self.current: Song | None = None
+        self.songs: SongQueue = SongQueue()
+
+        self._loop: bool = False
+        self._volume: float = 1.0
+        self.skip_votes: set = set()
+
+        self._audio_player = self.bot.loop.create_task(self._audio_player_task())
+
+    def __del__(self):
+        self._audio_player.cancel()
+
+    @property
+    def voice(self) -> discord.VoiceClient: 
+        return self._ctx.voice_client # type: ignore
+
+    @property
+    def volume(self):
+        return self._volume
+
+    @volume.setter
+    def volume(self, value: float):
+        if (self.current and self.current.source):
+            self.current.source.volume = self.volume
+        self._volume = value
+
+    @property
+    def voice_playing(self):
+        if not self.voice is None and not self.current is None:
+            return self.voice
+        else:
+            return None
+
+    async def _audio_player_task(self):
+        while True:
+            self._next.clear()
+
+            # Try to get the next song within 3 minutes.
+            # If no song will be added to the queue in time,
+            # the player will disconnect due to performance
+            # reasons.
+            try:
+                async with timeout(180):  # 3 minutes
+                    self.current: Song | None = await self.songs.get()
+            except asyncio.TimeoutError:
+                self.bot.loop.create_task(self.stop())
+                break
+
+            if self.current is None or self.voice is None:
+                break
+
+            self.current.source.volume = self.volume
+            self.voice.play(self.current.source, after=self._play_next_song)
+
+            await self.current.source.channel.send(embed=self.current.create_embed())
+
+            await self._next.wait()
+
+    def _play_next_song(self, error=None):
+        if error:
+            raise error
+
+        self.next()
+
+    def clear(self):
+        self.current = None
+        self.songs.clear()
+    
+    def next(self):
+        self._next.set()
+
+    def skip(self):
+        self.skip_votes.clear()
+
+        if voice := self.voice_playing:
+            voice.stop()
+
+    async def stop(self):
+        self.clear()
+
+        if self.voice:
+            await self.voice.disconnect()
+        
+    
+class VoiceStateContext(GuildContext):
+    voice_state: VoiceState

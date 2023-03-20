@@ -71,20 +71,3 @@ class YouTubeSource(discord.PCMVolumeTransformer):
                        **cls.FFMPEG_OPTIONS),
                    data=data, volume=volume)
 
-    @ staticmethod
-    def parse_duration(durationTime: int):
-        minutes, seconds = divmod(durationTime, 60)
-        hours, minutes = divmod(minutes, 60)
-        days, hours = divmod(hours, 24)
-
-        duration: typing.List[str] = []
-        if days > 0:
-            duration.append(f'{days} days')
-        if hours > 0:
-            duration.append(f'{hours} hours')
-        if minutes > 0:
-            duration.append(f'{minutes} minutes')
-        if seconds > 0:
-            duration.append(f'{seconds} seconds')
-
-        return ", ".join(duration)

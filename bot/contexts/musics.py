@@ -1,13 +1,13 @@
 import discord
 
-from discord.ext import commands
+from bot.commands.musics.state import VoiceStateContext
 
 
 class GuildVoiced(discord.Guild):
     voice_client: discord.VoiceClient
 
 
-class GuildBotVoicedContext(commands.Context):
+class GuildBotVoicedContext(VoiceStateContext):
     guild: GuildVoiced
     author: discord.Member
     voice_client: discord.VoiceClient
@@ -25,13 +25,13 @@ class AuthorVoicedChannelState(discord.Member):
     voice: VoicedState
 
 
-class GuildVoicedContext(commands.Context):
+class GuildVoicedContext(VoiceStateContext):
     guild: GuildVoiced
     author: AuthorVoicedState
     voice_client: discord.VoiceClient
 
 
-class GuildVoicedAllowedContext(commands.Context):
+class GuildVoicedAllowedContext(VoiceStateContext):
     guild: GuildVoiced
     author: AuthorVoicedChannelState
     voice_client: discord.VoiceClient
