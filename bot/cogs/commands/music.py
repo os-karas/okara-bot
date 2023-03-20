@@ -75,7 +75,7 @@ class Music(commands.Cog):
                 color=discord.Color.dark_teal()))
         
         if 0 > volume or volume > 100:
-            raise commands.RangeError(volume, 0, 100)
+            raise commands.BadArgument("the volume must be between 0 and 100")
         ctx.voice_client.source.volume = volume / 100
         await ctx.send(
             embed=discord.Embed(
@@ -102,5 +102,5 @@ class Music(commands.Cog):
             ctx.voice_client.play(source)
 
 
-async def setup(bot: commands.Bot):
-    await bot.add_cog(Music(bot))
+def setup(bot: commands.Bot):
+    bot.add_cog(Music(bot))

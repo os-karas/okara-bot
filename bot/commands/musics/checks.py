@@ -57,11 +57,11 @@ def not_has_voice_client():
 
 
 def has_voice_author():
-    def predicate(ctx: GuildContext):
+    def predicate(ctx: GuildContext) :
         if ctx.author.voice is None:
             raise AuthorNotConnected()
         return True
-    return commands.check(predicate)
+    return commands.check(predicate) # type: ignore
 
 
 def has_voice_channel_author():
@@ -69,7 +69,7 @@ def has_voice_channel_author():
         if ctx.author.voice.channel is None:
             raise BotNotPermission()
         return True
-    return commands.check(predicate)
+    return commands.check(predicate) # type: ignore
 
 
 def equals_channel_voice():
@@ -77,4 +77,4 @@ def equals_channel_voice():
         if ctx.author.voice.channel != ctx.voice_client.channel:
             raise DifferentVoiceChannels()
         return True
-    return commands.check(predicate)
+    return commands.check(predicate) # type: ignore

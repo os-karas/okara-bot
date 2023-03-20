@@ -1,41 +1,50 @@
 import typing
 import discord
+import inspect
 
 from discord.ext import commands
-from discord import components
 
 if typing.TYPE_CHECKING:
     CommandList = typing.List[commands.Command[commands.Cog, ..., typing.Any]]
     CogMapping = typing.Dict[typing.Optional[commands.Cog], CommandList]
 
 
-class HelpView(discord.ui.View):
+class SelectInfoCategories(discord.ui.Select):
+    def __init__(self, mapping: 'CogMapping'):
+        super().__init__(min_values=1, max_values=1)
 
-    def __init__(self, *, mapping: 'CogMapping', msg: discord.Message, timeout: typing.Optional[float] = 180):
         local_mapping: typing.Dict[str, CommandList] = {}
         for cog, commands in mapping.items():  # get the cog and its commands separately
             if len(commands) < 1:
                 continue
             local_mapping[cog.qualified_name if cog else "No Category"] = commands
         self.mapping = local_mapping
-        self.msg = msg
-        super().__init__(timeout=timeout)
 
-    @discord.ui.select(channel_types=[discord.ChannelType.text],
-                       min_values=1,
-                       max_values=1,
-                       options=[components.SelectOption(
-                           label=group[0],
-                           value=group[1]
-                       ) for group in [("🛠️ Utils", "Utils"),
-                                       ("❓ No Category", "No Category"),
-                                       ("🎵 Music", "Music"),
-                                       ]])
-    async def select_channels(self, interaction: discord.Interaction, select: discord.ui.Select):
-        selected = select.values[0]
+        # Set the options that will be presented inside the dropdown
+        for group in [("🛠️ Utils", "Utils"),
+                      ("❓ No Category", "No Category"),
+                      ("🎵 Music", "Music"),
+                      ]:
+            self.add_option(
+                label=group[0],
+                value=group[1])
+
+    def _str_command(self, command: commands.Command):
+        params = command.params.values()
+        params = filter(
+            lambda param:
+            param.name != "self" and param.name != "ctx",
+            params)
+        return f"{command.name} {' '.join(map(self._str_command_param, params))}"
+
+    def _str_command_param(self, param: inspect.Parameter):
+        return f"<{param.name}>" if param.default else f"[{param.name}]"
+
+    async def callback(self, interaction: discord.Interaction):
+        selected = self.values[0]
         selected = next(filter(lambda option: option.value == selected,
-                               select.options))
-        select.placeholder = selected.label
+                               self.options))
+        self.placeholder = selected.label
 
         commands = self.mapping[selected.value]
         description = commands[0].cog.description if not commands[0].cog is None else None
@@ -55,18 +64,20 @@ class HelpView(discord.ui.View):
                 } 
                 """
 
-            embed.add_field(name=self.str_command(
+            embed.add_field(name=self._str_command(
                 command), value=value, inline=False)
 
         embed.set_footer(text="[] => Optional | <> => Required")
 
-        return await interaction.response.edit_message(embed=embed, view=self)
+        return await interaction.response.edit_message(embed=embed, view=self.view)
 
-    def str_command(self, command: commands.Command):
-        return f"{command.name} {' '.join(map(self.str_command_param, command.params.values()))}"
 
-    def str_command_param(self, param: commands.Parameter):
-        return f"<{param.name}>" if param.required else f"[{param.name}]"
+class HelpView(discord.ui.View):
+
+    def __init__(self, *, mapping: 'CogMapping', msg: discord.Message, timeout: typing.Optional[float] = 180):
+        super().__init__(timeout=timeout)
+        self.msg = msg
+        self.add_item(SelectInfoCategories(mapping=mapping))
 
     async def on_timeout(self) -> None:
         self.clear_items()

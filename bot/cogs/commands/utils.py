@@ -27,7 +27,7 @@ class Utils(commands.Cog):
         """calculate math expressions"""
 
         if calc.__len__() > 50:
-            raise commands.RangeError(calc, 1, 50)
+            raise commands.BadArgument("the calc must be between 0 and 50 characters")
 
         await ctx.send(embed=Embed(
             title=calc,
@@ -35,9 +35,9 @@ class Utils(commands.Cog):
             color=discord.Color.dark_green()
         ))
 
-    @calculate.error
-    async def calculate_error(self, ctx: commands.Context, err: commands.CommandError):
-        if isinstance(err, commands.CommandInvokeError):
+    @calculate.error # type: ignore
+    async def calculate_error(self, ctx: commands.Context, error: commands.CommandError):
+        if isinstance(error, commands.CommandInvokeError):
             ctx.command_failed = False
             return await ctx.message.reply("Invalid calculation, enter a valid calculation.")
 
@@ -95,5 +95,5 @@ class Utils(commands.Cog):
         await ctx.send(embed=embed)
 
 
-async def setup(bot: commands.Bot):
-    await bot.add_cog(Utils(bot))
+def setup(bot: commands.Bot):
+    bot.add_cog(Utils(bot))

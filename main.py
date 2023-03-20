@@ -22,16 +22,16 @@ from bot.commands.help import HelpCommand
 from bot.utils.bot import load_module_extensions
 
 
-async def load_extensions(bot: commands.Bot):
-    await load_module_extensions(bot, "bot/cogs/commands")
-    await load_module_extensions(bot, "bot/cogs/tasks")
-    await load_module_extensions(bot, "bot/cogs/events")
+def load_extensions(bot: commands.Bot):
+    load_module_extensions(bot, "bot/cogs/commands")
+    load_module_extensions(bot, "bot/cogs/tasks")
+    load_module_extensions(bot, "bot/cogs/events")
 
 
 load_dotenv()
 
 bot = commands.Bot(
-    command_prefix=commands.when_mentioned_or("_"),
+    command_prefix=lambda bot, msg :commands.when_mentioned_or("_")(bot, msg),
     intents=discord.Intents.all(),
     help_command=HelpCommand())
 
@@ -42,5 +42,5 @@ async def hello(ctx):
     await ctx.send("world")
 
 
-asyncio.run(load_extensions(bot))
+load_extensions(bot)
 bot.run(os.getenv("BOT_TOKEN") or "")

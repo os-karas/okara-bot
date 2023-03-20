@@ -30,5 +30,5 @@ class Errors(commands.Cog):
                              color=discord.Color.dark_red())
 
 
-async def setup(bot: commands.Bot):
-    await bot.add_cog(Errors(bot))
+def setup(bot: commands.Bot):
+    bot.add_cog(Errors(bot))
