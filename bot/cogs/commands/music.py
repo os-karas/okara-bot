@@ -260,8 +260,8 @@ class Music(commands.Cog):
             song = Song(source)
 
             await ctx.voice_state.songs.put(song)
-            if not ctx.voice_state.current:
-                ctx.voice_state.next()
+            if ctx.voice_state.audio_player.cancelled():
+                ctx.voice_state.start_audio_player()
             await ctx.send(embed=discord.Embed(
                 title=f'enqueued music',
                 description=f"The song '{source}' has been queued",

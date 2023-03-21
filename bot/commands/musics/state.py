@@ -25,7 +25,7 @@ class VoiceState:
         self._volume: float = 1.0
         self.skip_votes: set = set()
 
-        self._audio_player = self.bot.loop.create_task(self._audio_player_task())
+        self.start_audio_player()
 
     def __del__(self):
         self._audio_player.cancel()
@@ -37,6 +37,10 @@ class VoiceState:
     @property
     def volume(self):
         return self._volume
+
+    @property
+    def audio_player(self):
+        return self._audio_player
 
     @volume.setter
     def volume(self, value: float):
@@ -50,6 +54,10 @@ class VoiceState:
             return self.voice.is_playing() or self.voice.is_paused()
         else:
             return False
+    
+    def start_audio_player(self):
+        self._audio_player = self.bot.loop.create_task(self._audio_player_task())
+    
 
     async def _audio_player_task(self):
         while True:
@@ -64,10 +72,11 @@ class VoiceState:
                     self.current: Song | None = await self.songs.get()
             except asyncio.TimeoutError:
                 self.bot.loop.create_task(self.stop())
+                self._audio_player.cancel()
                 break
 
             if self.current is None or self.voice is None:
-                break
+                continue
 
             self.current.source.volume = self.volume
             self.voice.play(self.current.source, after=self._play_next_song)
