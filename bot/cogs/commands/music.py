@@ -184,7 +184,6 @@ class Music(commands.Cog):
         ctx.voice_state.songs.clear()
         if voice := ctx.voice_state.voice_playing:
             voice.stop()
-            ctx.voice_state.current = None
             await ctx.message.add_reaction('⏹')
 
     @commands.command()
