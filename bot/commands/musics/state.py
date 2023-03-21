@@ -96,6 +96,7 @@ class VoiceState:
         self.songs.clear()
     
     def next(self):
+        self.current = None
         self._next.set()
 
     def skip(self):
