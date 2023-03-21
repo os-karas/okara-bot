@@ -45,11 +45,11 @@ class VoiceState:
         self._volume = value
 
     @property
-    def voice_playing(self):
-        if not self.voice is None and not self.current is None:
-            return self.voice
+    def voice_is_playing(self):
+        if self.voice:
+            return self.voice.is_playing() or self.voice.is_paused()
         else:
-            return None
+            return False
 
     async def _audio_player_task(self):
         while True:
@@ -92,8 +92,8 @@ class VoiceState:
     def skip(self):
         self.skip_votes.clear()
 
-        if voice := self.voice_playing:
-            voice.stop()
+        if self.voice_is_playing:
+            self.voice.stop()
 
     async def stop(self):
         self.clear()

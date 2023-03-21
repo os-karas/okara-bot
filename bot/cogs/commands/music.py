@@ -182,8 +182,8 @@ class Music(commands.Cog):
     async def stop(self, ctx: GuildVoicedAllowedContext):
         """Stop and clear the music queue"""
         ctx.voice_state.songs.clear()
-        if voice := ctx.voice_state.voice_playing:
-            voice.stop()
+        if ctx.voice_state.voice_is_playing:
+            ctx.voice_state.voice.stop()
             await ctx.message.add_reaction('⏹')
 
     @commands.command()
