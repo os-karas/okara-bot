@@ -212,8 +212,10 @@ class Music(commands.Cog):
         """List the songs to be played"""
         if len(ctx.voice_state.songs) == 0:
             raise QueueEmpty()
-        
-        embed = discord.Embed(title ="Queue Musics", description=f'**{len(ctx.voice_state.songs)} tracks:**')
+
+        embed = discord.Embed(title="Queue Musics",
+                              description=f'**{len(ctx.voice_state.songs)} tracks:**',
+                              color=discord.Color.dark_purple())
 
         items_per_page = 9
         pages = math.ceil(len(ctx.voice_state.songs) / items_per_page)
@@ -226,7 +228,8 @@ class Music(commands.Cog):
         songs = ctx.voice_state.songs[start:end]
 
         for i, song in enumerate(songs, start=start + 1):
-            embed.add_field(name=f'**`{i}.`{song.source.data.title}**',value=f'[Link]({song.source.data.watch_url})\n')
+            embed.add_field(name=f'**`{i}.`{song.source.data.title}**',
+                            value=f'[Link]({song.source.data.watch_url})\n')
 
         await ctx.send(embed=embed)
 
@@ -259,7 +262,8 @@ class Music(commands.Cog):
         ctx.voice_state.songs.remove(index - 1)
         await ctx.send(embed=discord.Embed(
             title="music removed",
-            description=f"{song.source} removed"  # type: ignore
+            description=f"{song.source} removed",  # type: ignore
+            color=discord.Color.dark_orange()
         ))
 
     @commands.command(aliases=["song", "music"])
