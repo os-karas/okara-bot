@@ -79,10 +79,10 @@ class VoiceState:
                 continue
 
             self.current.source.volume = self.volume
-            self.voice.play(self.current.source, after=self._play_next_song)
+            self.voice.play(self.current.source.audio_source(), after=self._play_next_song)
 
             await self.current.source.channel.send(embed=self.current.create_embed())
-            last_current = Song(await self.current.source.clone())
+            last_current = self.current
             # em caso de loop a ultima musica será adicionada ao final
             await self._next.wait()
             if self.loop:

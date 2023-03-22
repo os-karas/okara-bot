@@ -1,6 +1,5 @@
 import discord
 import asyncio
-import typing
 
 
 from discord.ext import commands
@@ -12,16 +11,17 @@ class SourceError(commands.CommandError):
     pass
 
 
-class YouTubeSource(discord.PCMVolumeTransformer):
+class YouTubeSource():
     FFMPEG_OPTIONS = {
         'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5',
         'options': '-vn',
     }
 
-    def __init__(self, ctx: commands.Context, source: discord.FFmpegPCMAudio, *,
+    def __init__(self, ctx: commands.Context, source: str, *,
                  data: YouTube, volume: float = 1.0):
 
-        super().__init__(source, volume)
+        self.volume = volume
+        self._source_link = source
 
         self.ctx = ctx
 
@@ -29,12 +29,15 @@ class YouTubeSource(discord.PCMVolumeTransformer):
         self.channel = ctx.channel
         self.data = data
 
+    def audio_source(self):
+        return discord.PCMVolumeTransformer(
+            discord.FFmpegPCMAudio(
+                self._source_link,
+                **self.FFMPEG_OPTIONS),
+            self.volume)
+
     def __str__(self):
         return f'**{self.data.title}** by **{self.data.author}**'
-
-    
-    def clone(self):
-        return self.create_source(self.ctx, self.data.watch_url, loop = asyncio.get_event_loop(), volume = self.volume)
 
     @classmethod
     async def create_source(cls, ctx: commands.Context, search: str, *,
@@ -70,10 +73,7 @@ class YouTubeSource(discord.PCMVolumeTransformer):
 
         formats_quantity = len(streaming_data["formats"])
         return cls(ctx,
-                   discord.FFmpegPCMAudio(
-                       streaming_data["formats"]
-                       [int(formats_quantity / 2)]
-                       ["url"],
-                       **cls.FFMPEG_OPTIONS),
+                   streaming_data["formats"]
+                   [int(formats_quantity / 2)]
+                   ["url"],
                    data=data, volume=volume)
-
