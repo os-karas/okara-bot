@@ -21,7 +21,7 @@ class VoiceState:
         self.current: Song | None = None
         self.songs: SongQueue = SongQueue()
 
-        self._loop: bool = False
+        self.loop: bool = False
         self._volume: float = 1.0
         self.skip_votes: set = set()
 
@@ -82,8 +82,12 @@ class VoiceState:
             self.voice.play(self.current.source, after=self._play_next_song)
 
             await self.current.source.channel.send(embed=self.current.create_embed())
-
+            last_current = Song(await self.current.source.clone())
+            # em caso de loop a ultima musica será adicionada ao final
             await self._next.wait()
+            if self.loop:
+                await self.songs.put(last_current)
+        
 
     def _play_next_song(self, error=None):
         if error:

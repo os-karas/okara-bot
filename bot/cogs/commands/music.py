@@ -148,7 +148,24 @@ class Music(commands.Cog):
 
         else:
             await ctx.send('You have already voted to skip this song.')
-        
+
+    @commands.command()
+    @commands.has_permissions(manage_guild=True)
+    @checks.equals_channel_voice()
+    @checks.has_voice_channel_author()
+    @checks.has_voice_author()
+    @checks.has_voice_client()
+    async def loop(self, ctx: GuildVoicedAllowedContext, loop: typing.Optional[bool] = None):
+        """Resumes a currently paused song"""
+
+        if not loop is None:
+            ctx.voice_state.loop = loop
+        await ctx.send(embed=discord.Embed(
+            title=f"loop state",
+            description=f"loop {'on' if ctx.voice_state.loop else 'off'}",
+            color=discord.Color.dark_orange()
+        ))
+
     @commands.command()
     @commands.has_permissions(manage_guild=True)
     @checks.equals_channel_voice()
