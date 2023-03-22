@@ -21,11 +21,11 @@ class VoiceState:
         self.current: Song | None = None
         self.songs: SongQueue = SongQueue()
 
-        self._loop: bool = False
+        self.loop: bool = False
         self._volume: float = 1.0
         self.skip_votes: set = set()
 
-        self._audio_player = self.bot.loop.create_task(self._audio_player_task())
+        self.start_audio_player()
 
     def __del__(self):
         self._audio_player.cancel()
@@ -38,6 +38,10 @@ class VoiceState:
     def volume(self):
         return self._volume
 
+    @property
+    def audio_player(self):
+        return self._audio_player
+
     @volume.setter
     def volume(self, value: float):
         if (self.current and self.current.source):
@@ -45,11 +49,15 @@ class VoiceState:
         self._volume = value
 
     @property
-    def voice_playing(self):
-        if not self.voice is None and not self.current is None:
-            return self.voice
+    def voice_is_playing(self):
+        if self.voice:
+            return self.voice.is_playing() or self.voice.is_paused()
         else:
-            return None
+            return False
+    
+    def start_audio_player(self):
+        self._audio_player = self.bot.loop.create_task(self._audio_player_task())
+    
 
     async def _audio_player_task(self):
         while True:
@@ -64,17 +72,22 @@ class VoiceState:
                     self.current: Song | None = await self.songs.get()
             except asyncio.TimeoutError:
                 self.bot.loop.create_task(self.stop())
+                self._audio_player.cancel()
                 break
 
             if self.current is None or self.voice is None:
-                break
+                continue
 
             self.current.source.volume = self.volume
             self.voice.play(self.current.source, after=self._play_next_song)
 
             await self.current.source.channel.send(embed=self.current.create_embed())
-
+            last_current = Song(await self.current.source.clone())
+            # em caso de loop a ultima musica será adicionada ao final
             await self._next.wait()
+            if self.loop:
+                await self.songs.put(last_current)
+        
 
     def _play_next_song(self, error=None):
         if error:
@@ -87,13 +100,14 @@ class VoiceState:
         self.songs.clear()
     
     def next(self):
+        self.current = None
         self._next.set()
 
     def skip(self):
         self.skip_votes.clear()
 
-        if voice := self.voice_playing:
-            voice.stop()
+        if self.voice_is_playing:
+            self.voice.stop()
 
     async def stop(self):
         self.clear()

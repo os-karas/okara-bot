@@ -19,9 +19,11 @@ class YouTubeSource(discord.PCMVolumeTransformer):
     }
 
     def __init__(self, ctx: commands.Context, source: discord.FFmpegPCMAudio, *,
-                 data: YouTube, volume: float = 0.5):
+                 data: YouTube, volume: float = 1.0):
 
         super().__init__(source, volume)
+
+        self.ctx = ctx
 
         self.requester = ctx.author
         self.channel = ctx.channel
@@ -30,10 +32,14 @@ class YouTubeSource(discord.PCMVolumeTransformer):
     def __str__(self):
         return f'**{self.data.title}** by **{self.data.author}**'
 
+    
+    def clone(self):
+        return self.create_source(self.ctx, self.data.watch_url, loop = asyncio.get_event_loop(), volume = self.volume)
+
     @classmethod
     async def create_source(cls, ctx: commands.Context, search: str, *,
                             loop: asyncio.AbstractEventLoop = asyncio.get_event_loop(),
-                            volume: float = 0.5):
+                            volume: float = 1):
 
         # raise commands.CheckFailure("Error in bot")
         try:

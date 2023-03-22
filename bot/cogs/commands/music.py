@@ -148,7 +148,24 @@ class Music(commands.Cog):
 
         else:
             await ctx.send('You have already voted to skip this song.')
-        
+
+    @commands.command()
+    @commands.has_permissions(manage_guild=True)
+    @checks.equals_channel_voice()
+    @checks.has_voice_channel_author()
+    @checks.has_voice_author()
+    @checks.has_voice_client()
+    async def loop(self, ctx: GuildVoicedAllowedContext, loop: typing.Optional[bool] = None):
+        """Resumes a currently paused song"""
+
+        if not loop is None:
+            ctx.voice_state.loop = loop
+        await ctx.send(embed=discord.Embed(
+            title=f"loop state",
+            description=f"loop {'on' if ctx.voice_state.loop else 'off'}",
+            color=discord.Color.dark_orange()
+        ))
+
     @commands.command()
     @commands.has_permissions(manage_guild=True)
     @checks.equals_channel_voice()
@@ -182,8 +199,8 @@ class Music(commands.Cog):
     async def stop(self, ctx: GuildVoicedAllowedContext):
         """Stop and clear the music queue"""
         ctx.voice_state.songs.clear()
-        if voice := ctx.voice_state.voice_playing:
-            voice.stop()
+        if ctx.voice_state.voice_is_playing:
+            ctx.voice_state.voice.stop()
             await ctx.message.add_reaction('⏹')
 
     @commands.command()
@@ -195,8 +212,10 @@ class Music(commands.Cog):
         """List the songs to be played"""
         if len(ctx.voice_state.songs) == 0:
             raise QueueEmpty()
-        
-        embed = discord.Embed(title ="Queue Musics", description=f'**{len(ctx.voice_state.songs)} tracks:**')
+
+        embed = discord.Embed(title="Queue Musics",
+                              description=f'**{len(ctx.voice_state.songs)} tracks:**',
+                              color=discord.Color.dark_purple())
 
         items_per_page = 9
         pages = math.ceil(len(ctx.voice_state.songs) / items_per_page)
@@ -209,7 +228,8 @@ class Music(commands.Cog):
         songs = ctx.voice_state.songs[start:end]
 
         for i, song in enumerate(songs, start=start + 1):
-            embed.add_field(name=f'**`{i}.`{song.source.data.title}**',value=f'[Link]({song.source.data.watch_url})\n')
+            embed.add_field(name=f'**`{i}.`{song.source.data.title}**',
+                            value=f'[Link]({song.source.data.watch_url})\n')
 
         await ctx.send(embed=embed)
 
@@ -242,7 +262,8 @@ class Music(commands.Cog):
         ctx.voice_state.songs.remove(index - 1)
         await ctx.send(embed=discord.Embed(
             title="music removed",
-            description=f"{song.source} removed"  # type: ignore
+            description=f"{song.source} removed",  # type: ignore
+            color=discord.Color.dark_orange()
         ))
 
     @commands.command(aliases=["song", "music"])
@@ -260,8 +281,8 @@ class Music(commands.Cog):
             song = Song(source)
 
             await ctx.voice_state.songs.put(song)
-            if not ctx.voice_state.current:
-                ctx.voice_state.next()
+            if ctx.voice_state.audio_player.cancelled():
+                ctx.voice_state.start_audio_player()
             await ctx.send(embed=discord.Embed(
                 title=f'enqueued music',
                 description=f"The song '{source}' has been queued",
