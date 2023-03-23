@@ -200,6 +200,7 @@ class Music(commands.Cog):
         """Stop and clear the music queue"""
         ctx.voice_state.songs.clear()
         if ctx.voice_state.voice_is_playing:
+            ctx.voice_state.loop = False;
             ctx.voice_state.voice.stop()
             await ctx.message.add_reaction('⏹')
 
