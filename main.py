@@ -3,11 +3,11 @@
 """A simple bot from discord"""
 
 __author__ = "Kauan Augusto"
-__copyright__ = "Copyright 2007, The Cogent Project"
+__copyright__ = "Copyright 2022, The Snake Bot Project"
 __credits__ = []
 __license__ = "MIT"
 __version__ = "0.1.0"
-__maintainer__ = "Rob Knight"
+__maintainer__ = "Kauan Augusto"
 __email__ = "kauaug.mo@gmail.com"
 __status__ = "Development"
 
