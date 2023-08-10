@@ -67,11 +67,11 @@ class YouTubeSource():
 
         try:
             streaming_data = data.streaming_data
-            if not "formats" in streaming_data:
-                raise SourceError(f"Live is not supported")
         except:
             raise SourceError(f"Could not get the music `{search}`")
-
+        else:
+            if not "formats" in streaming_data:
+                raise SourceError(f"Live is not supported")
         formats_quantity = len(streaming_data["formats"])
         return cls(ctx,
                    streaming_data["formats"]
