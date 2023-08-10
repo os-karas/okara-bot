@@ -1,4 +1,5 @@
 import asyncio
+import logging
 import discord
 
 from bot.contexts.all import GuildContext
@@ -92,8 +93,7 @@ class VoiceState:
 
     def _play_next_song(self, error=None):
         if error:
-            raise error
-
+            logging.warning(error)
         self.next()
 
     def clear(self):
