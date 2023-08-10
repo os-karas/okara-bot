@@ -1,3 +1,4 @@
+import typing
 import discord
 import asyncio
 
@@ -12,16 +13,12 @@ class SourceError(commands.CommandError):
 
 
 class YouTubeSource():
-    FFMPEG_OPTIONS = {
-        'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5',
-        'options': '-vn',
-    }
 
     def __init__(self, ctx: commands.Context, source: str, *,
                  data: YouTube, volume: float = 1.0):
 
-        self.volume = volume
         self._source_link = source
+        self._audio_source: typing.Optional[discord.PCMVolumeTransformer] = None
 
         self.ctx = ctx
 
@@ -29,12 +26,16 @@ class YouTubeSource():
         self.channel = ctx.channel
         self.data = data
 
+    @property
     def audio_source(self):
-        return discord.PCMVolumeTransformer(
-            discord.FFmpegPCMAudio(
-                self._source_link,
-                **self.FFMPEG_OPTIONS),
-            self.volume)
+        if self._audio_source is None:
+            self._audio_source = discord.PCMVolumeTransformer(
+                discord.FFmpegPCMAudio(
+                    self._source_link,
+                    before_options='-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5',
+                    options='-vn',),
+                1)
+        return self._audio_source
 
     def __str__(self):
         return f'**{self.data.title}** by **{self.data.author}**'

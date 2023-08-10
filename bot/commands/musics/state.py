@@ -44,9 +44,9 @@ class VoiceState:
 
     @volume.setter
     def volume(self, value: float):
-        if (self.current and self.current.source):
-            self.current.source.volume = self.volume
         self._volume = value
+        if (self.current and self.current.source):
+            self.current.source.audio_source.volume = self.volume
 
     @property
     def voice_is_playing(self):
@@ -78,8 +78,9 @@ class VoiceState:
             if self.current is None or self.voice is None:
                 continue
 
-            self.current.source.volume = self.volume
-            self.voice.play(self.current.source.audio_source(), after=self._play_next_song)
+            self.voice.play(self.current.source.audio_source,
+                            after=self._play_next_song)
+            self.volume = self.volume
 
             await self.current.source.channel.send(embed=self.current.create_embed())
             last_current = self.current
