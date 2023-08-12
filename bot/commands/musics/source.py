@@ -26,10 +26,13 @@ class YouTubeSource():
         self.channel = ctx.channel
         self.data = data
 
-    @property
-    def audio_source(self):
-        if self._audio_source is None:
-            self._audio_source = discord.PCMVolumeTransformer(
+
+    def set_volume(self, volume):
+        if self._audio_source:
+            self._audio_source.volume = volume
+
+    def get_audio_source(self):
+        self._audio_source = discord.PCMVolumeTransformer(
                 discord.FFmpegPCMAudio(
                     self._source_link,
                     before_options='-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5',
